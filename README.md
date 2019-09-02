@@ -29,13 +29,9 @@ npm i -g vsce
 vsce package
 ```
 
-3. Load packed extension
+3. Open command pallete, type `> Install from VSIX`
 
-To load an extension, you need to copy the files to your VS Code extensions folder .vscode/extensions. Depending on your platform, it is located in the following folders:
-
-- Windows `%USERPROFILE%\.vscode\extensions`
-- macOS `~/.vscode/extensions`
-- Linux `~/.vscode/extensions`
+4. Choose generated `.vsix` file
 
 ## Features
 
