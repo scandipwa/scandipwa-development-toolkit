@@ -1,0 +1,247 @@
+{
+	"Default export": {
+		"prefix": "exdf",
+		"body": "export { default } from './$0';",
+		"description": "Default export declaration for IndexJS"
+	},
+	"New ScandiPWA component": {
+		"prefix": "comp",
+		"body": [
+			"import { PureComponent } from 'react';",
+			"import PropTypes from 'prop-types';",
+			"",
+			"export default class ${1:${TM_FILENAME/[\\.][A-Z]*//gi}} extends PureComponent {",
+			"    state = {};",
+			"",
+			"    static propTypes = {};",
+			"",
+			"    render() {",
+			"        return ${2:null};",
+			"    }",
+			"}",
+			""
+		],
+		"description": "Creates new ScandiPWA component"
+	},
+	"Extension for ScandiPWA component": {
+		"prefix": "ecomp",
+		"body": [
+			"import Source${1:${TM_FILENAME/[\\.][A-Z]*//gi}} from 'SourceComponent/$1/$1.component';",
+			"",
+			"export default class $1 extends Source$1 {",
+			"    $2",
+			"}",
+			""
+		],
+		"description": "Extends Source ScandiPWA component"
+	},
+	"New ScandiPWA container": {
+		"prefix": "cont",
+		"body": [
+			"import { PureComponent } from 'react';",
+			"import PropTypes from 'prop-types';",
+			"import ${1:${TM_FILENAME/[\\.][A-Z]*//gi}} from './$1.component';",
+			"",
+			"export class $1Container extends PureComponent {",
+			"    static propTypes = {",
+			"       $2",
+			"    };",
+			"",
+			"    render() {",
+			"        return <$1$3 />",
+			"    }",
+			"}",
+			"",
+			"export default $1Container;",
+			""
+		],
+		"description": "Creates new ScandiPWA container class"
+	},
+	"Extension for ScandiPWA container": {
+		"prefix": "econt",
+		"body": [
+			"import { ${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Container as Source$1Container } from 'SourceComponent/$1/$1.container';",
+			"",
+			"export class $1Container extends Source$1Container {",
+			"    $2",
+			"}",
+			"",
+			"export default $1Container;",
+			""
+		],
+		"description": "Extends Source ScandiPWA container class"
+	},
+	"Connect component": {
+		"prefix": "con",
+		"body": "connect(${2|mapStateToProps,null|}, ${3|mapDispatchToProps,null|})(${1:$TM_SELECTED_TEXT})",
+		"description": "Connects component to redux"
+	},
+	"Map state to props": {
+		"prefix": "mstp",
+		"body": [
+			"export const mapStateToProps = state => ({",
+			"    $1",
+			"});"
+		],
+		"description": "Declares mapStateToProps"
+	},
+	"Map dispatch to props": {
+		"prefix": "mdtp",
+		"body": [
+			"export const mapDispatchToProps = dispatch => ({",
+			"    $1",
+			"});"
+		],
+		"description": "Declared mapDispatchToProps"
+	},
+	"New ScandiPWA query": {
+		"prefix": "qc",
+		"body": [
+			"import { Field } from 'SourceUtil/Query';",
+			"",
+			"export class ${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Query {",
+			"    getQuery() {",
+			"        return new Field('${1/([A-Z])/${1:/downcase}/i}');",
+			"    }",
+			"}",
+			"",
+			"export default new $1Query();",
+			""
+		],
+		"description": "Creates new ScandiPWA query"
+	},
+	"Extension for ScandiPWA query": {
+		"prefix": "eqc",
+		"body": [
+			"import { ${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Query as Source$1Query } from 'SourceQuery';",
+			"",
+			"export class $1Query extends Source$1Query {",
+			"",
+			"}",
+			"",
+			"export default new $1Query();",
+			""
+		],
+		"description": "Extends ScandiPWA Source query"
+	},
+	"Extend ScandiPWA Route component": {
+		"prefix": "eroute",
+		"body": [
+			"import Source${1:${TM_FILENAME/[\\.][A-Z]*//gi}} from 'SourceRoute/$1/$1.component';",
+			"",
+			"export default class $1 extends Source$1 {",
+			"    $2",
+			"}",
+			""
+		],
+		"description": "Extends ScandiPWA Source Route component"
+	},
+	"Extend ScandiPWA Route container": {
+		"prefix": "ecroute",
+		"body": [
+			"import { ${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Container as Source$1Container } from 'SourceRoute/$1/$1.container';",
+			"",
+			"export class $1Container extends Source$1Container {",
+			"    $2",
+			"}",
+			"",
+			"export default $1Container;",
+			""
+		],
+		"description": "Extends ScandiPWA Source Route container"
+	},
+	"New reducer": {
+		"prefix": "crd",
+		"body": [
+			"import { $3 } from './${1:${TM_FILENAME/[\\.][A-Z]*//gi}}.action';",
+			"",
+			"export const initialState = {",
+			"    $2",
+			"};",
+			"",
+			"const $1Reducer = (state = initialState, action) => {",
+			"    const { type } = action;",
+			"    switch(type) {",
+			"    $4",
+			"    default:",
+			"        return state;",
+			"    }",
+			"};",
+			"",
+			"export default $1Reducer;",
+			""
+		],
+		"description": "Creates reducer"
+	},
+	"Extend reducer": {
+		"prefix": "erd",
+		"body": [
+			"import Source${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Reducer, { initialState as sourceInitialState } from 'SourceStore/$1/$1.reducer';",
+			"",
+			"export const initialState = {",
+			"    ...sourceInitialState,",
+			"};",
+			"",
+			"const $1Reducer = (state = initialState, action) => {",
+			"    const { type } = action;",
+			"    const sourceState = Source$1Reducer(state, action);",
+			"",
+			"    switch (type) {",
+			"    $2",
+			"    default:",
+			"        return { ...sourceState, ...state };",
+			"    }",
+			"};",
+			"",
+			"export default $1Reducer;",
+			""
+		],
+		"description": "Extends ScandiPWA reducer"
+	},
+	"Create dispatcher": {
+		"prefix": "cdisp",
+		"body": [
+			"import { QueryDispatcher } from 'SourceUtil/Request';",
+			"import { ${2:${TM_FILENAME/[\\.][A-Z]*//gi}}Query } from 'Query';",
+			"",
+			"export class $1Dispatcher {",
+			"    constructor() {",
+			"        super('${1:${TM_FILENAME/[\\.][A-Z]*//gi}}');",
+			"    }",
+			"",
+			"    onSuccess(data, dispatch) {",
+			"",
+			"    }",
+			"",
+			"    onError(error, dispatch) {",
+			"",
+			"    }",
+			"",
+			"    prepareRequest(options, dispatch) {",
+			"        return $2Query.getQuery(options);",
+			"    }",
+			"}",
+			"",
+			"export default new $1Dispatcher();",
+			""
+		],
+		"description": "Creates new ScandiPWA dispatcher"
+	},
+	"Extend dispatcher": {
+		"prefix": "edisp",
+		"body": [
+			"import { ${1:${TM_FILENAME/[\\.][A-Z]*//gi}}Dispatcher as Source$1Dispatcher } from 'SourceStore/$1/$1.dispatcher';",
+			"",
+			"export class $1Dispatcher extends Source$1Dispatcher {",
+			"    constructor() {",
+			"        super();",
+			"    }",
+			"    ",
+			"}",
+			"",
+			"export default new $1Dispatcher();",
+			""
+		],
+		"description": "Extends ScandiPWA dispatcher"
+	}
+}

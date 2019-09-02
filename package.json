@@ -1,0 +1,81 @@
+{
+	"name": "scandipwa-development-toolkit",
+	"displayName": "ScandiPWA VSCode snippets",
+	"description": "Snippets working with ScandiPWA",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.37.0"
+	},
+    "categories": ["Other"],
+	"activationEvents": [
+		"onCommand:extension.createNewComp",
+		"onCommand:extension.createNewRoute",
+		"onCommand:extension.createNewQuery",
+		"onCommand:extension.extendCoreComp",
+		"onCommand:extension.extendCoreQuery",
+		"onCommand:extension.extendCoreRoute"
+	],
+	"main": "./src/index.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.createNewComp",
+				"title": "ScandiPWA: Create new component"
+			},
+			{
+				"command": "extension.createNewRoute",
+				"title": "ScandiPWA: Create new route"
+			},
+			{
+				"command": "extension.createNewQuery",
+				"title": "ScandiPWA: Create new query"
+			},
+			{
+				"command": "extension.extendCoreComp",
+				"title": "ScandiPWA: Extend source component"
+			},
+			{
+				"command": "extension.extendCoreQuery",
+				"title": "ScandiPWA: Extend source query"
+			},
+			{
+				"command": "extension.extendCoreRoute",
+				"title": "ScandiPWA: Extend source route"
+			}
+        ],
+		"configuration": [
+			{
+				"title": "Scandipwa configuration",
+				"properties": {
+					"scandipwa.sourcePath": {
+						"type": "string",
+						"default": "../../../../../vendor/scandipwa/source/",
+						"description": "Path to Scandipwa source",
+						"format": "uri",
+						"scope": "window"
+					}
+				}
+			}
+		],
+		"snippets": [
+			{
+				"language": "javascript",
+				"path": "./src/snippets/javascript.json"
+			}
+		]
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.12.21",
+		"@types/vscode": "^1.37.0",
+		"eslint": "^5.13.0",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"typescript": "^3.3.1",
+		"vscode-test": "^1.0.2"
+	},
+	"dependencies": {
+		"ejs": "^2.6.2"
+	}
+}
