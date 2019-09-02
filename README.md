@@ -4,9 +4,38 @@
 
 This extension is a core extension of ScandiPWA extension pack for development in VSCode editor. 
 
-> **NOTE #0:** The store related file support is coming soon!
+> **NOTE #0**: The store related file support is coming soon!
 
 > **NOTE #1**: This extension is in beta, please use with caution and report any issues to Scandipwa Github.
+
+## Requirements
+
+1. Node 10^ + npm 6.8^
+2. VSCode ^1.37
+
+> **NOTE**: Extension might work on previous versions as well, it is not yet tested.
+
+## How to use?
+
+1. Install `vsce` – official extension packaging tool
+
+```
+npm i -g vsce
+```
+
+2. Pack the extension
+
+```
+vsce package
+```
+
+3. Load packed extension
+
+To load an extension, you need to copy the files to your VS Code extensions folder .vscode/extensions. Depending on your platform, it is located in the following folders:
+
+- Windows `%USERPROFILE%\.vscode\extensions`
+- macOS `~/.vscode/extensions`
+- Linux `~/.vscode/extensions`
 
 ## Features
 

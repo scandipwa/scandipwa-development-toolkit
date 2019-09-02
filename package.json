@@ -1,5 +1,6 @@
 {
-	"name": "scandipwa-development-toolkit",
+    "name": "scandipwa-development-toolkit",
+    "publisher": "ScandiPWA",
 	"displayName": "ScandiPWA VSCode snippets",
 	"description": "Snippets working with ScandiPWA",
 	"version": "0.0.1",
