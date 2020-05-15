@@ -48,3 +48,29 @@ export const createNewFileFromTemplate = async (src: string, dest: string, patte
     await fs.writeFileSync(destFile, content);
     openFile(destFile);
 };
+
+const getDirFolders = (path: string) : string[] => {
+    if (!fs.existsSync(path)) {
+        return [];
+    }
+    return fs.readdirSync(path);
+};
+
+const getSourcePath = (pathToSourceFolder: string) : string => {
+    const sourcePath : string = vscode.workspace.getConfiguration().get('scandipwa.sourcePath') || '';
+    return path.join(getWorkspacePath(), sourcePath, pathToSourceFolder);
+};
+
+export const showSourceDirectoryContentInSelect = async (pathToSourceFolder: string, placeHolder: string) => {
+    const componentNames = await getDirFolders(getSourcePath(pathToSourceFolder));
+    return await vscode.window.showQuickPick(
+        componentNames.map(label => ({ label })),
+        { placeHolder }
+    );
+};
+
+export const createNewFileWithContent = async (path: string, content: string) => {
+    const destFile = `${getWorkspacePath()}/${path}`;
+    await fs.writeFileSync(destFile, content);
+    openFile(destFile);
+};

@@ -10,7 +10,10 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:scandipwa-devtools.createNewComponent"
+		"onCommand:scandipwa-devtools.createNewComponent",
+		"onCommand:scandipwa-devtools.createNewRoute",
+		"onCommand:scandipwa-devtools.createNewQuery",
+		"onCommand:scandipwa-devtools.extendCoreQuery"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -18,6 +21,18 @@
 			{
 				"command": "scandipwa-devtools.createNewComponent",
 				"title": "NEW Create new component"
+			},
+			{
+				"command": "scandipwa-devtools.createNewRoute",
+				"title": "NEW Create new route"
+			},
+			{
+				"command": "scandipwa-devtools.createNewQuery",
+				"title": "NEW Create new query"
+			},
+			{
+				"command": "scandipwa-devtools.extendCoreQuery",
+				"title": "NEW Extend core query"
 			}
 		]
 	},

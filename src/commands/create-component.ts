@@ -3,7 +3,7 @@ import * as path from 'path';
 const { validateComponentName } = require('../util/validation');
 const { createNewFileFromTemplate, checkForFolderAndCreate } = require('../util/file');
 
-const extensionRoot = path.resolve(__dirname, '..', '..', 'src');
+export const extensionRoot = path.resolve(__dirname, '..', '..', 'src');
 
 interface Option {
     label: string;
