@@ -13,7 +13,9 @@
 		"onCommand:scandipwa-devtools.createNewComponent",
 		"onCommand:scandipwa-devtools.createNewRoute",
 		"onCommand:scandipwa-devtools.createNewQuery",
-		"onCommand:scandipwa-devtools.extendCoreQuery"
+		"onCommand:scandipwa-devtools.extendCoreQuery",
+		"onCommand:scandipwa-devtools.extendCoreComponent",
+		"onCommand:scandipwa-devtools.extendCoreRoute"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -33,6 +35,14 @@
 			{
 				"command": "scandipwa-devtools.extendCoreQuery",
 				"title": "NEW Extend core query"
+			},
+			{
+				"command": "scandipwa-devtools.extendCoreComponent",
+				"title": "NEW Extend core component"
+			},
+			{
+				"command": "scandipwa-devtools.extendCoreRoute",
+				"title": "NEW Extend core route"
 			}
 		]
 	},
@@ -45,7 +55,12 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@babel/generator": "^7.9.6",
 		"@babel/parser": "^7.9.6",
+		"@babel/traverse": "^7.9.6",
+		"@babel/types": "^7.9.6",
+		"@types/babel__generator": "^7.6.1",
+		"@types/babel__traverse": "^7.0.11",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^13.11.0",
