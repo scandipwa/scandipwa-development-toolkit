@@ -1,7 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-const { validateComponentName } = require('../util/validation');
-const { createNewFileFromTemplate, checkForFolderAndCreate } = require('../util/file');
+import { openFile } from '../util/file';
+const { validateName } = require('../util/validation');
+const {
+    createNewFileFromTemplate,
+    checkForFolderAndCreate,
+    getWorkspacePath
+} = require('../util/file');
 
 export const extensionRoot = path.resolve(__dirname, '..', '..', 'src');
 
@@ -27,7 +32,7 @@ const getFileMap = (containerFeatures: Array<Option>) => {
 
     return {
         ...files,
-        'container.js': `../templates/${containerName}.js`
+        'container.js': `templates/${containerName}.js`
     };
 };
 
@@ -37,7 +42,7 @@ export default async (isRoute: Boolean) => {
     const componentName = await vscode.window.showInputBox({
         placeHolder: isRoute ? 'MyRoute' : 'MyComponent',
         prompt: isRoute ? 'Enter route name' : 'Enter component name',
-        validateInput: validateComponentName
+        validateInput: validateName
     });
 
     if (!componentName) {
@@ -71,6 +76,7 @@ export default async (isRoute: Boolean) => {
         componentName
     );
 
+    let lastCreatedFile = '';
     Object.entries(getFileMap(containerFeatures)).forEach(([postfix, src]) => {
         createNewFileFromTemplate(
             path.join(extensionRoot, src),
@@ -78,5 +84,11 @@ export default async (isRoute: Boolean) => {
             /Placeholder/g,
             componentName
         );
+
+        lastCreatedFile = `${pathToSourceFolder}/${componentName}/${componentName}.${postfix}`;
     });
+
+    if (lastCreatedFile) {
+        openFile(path.resolve(getWorkspacePath(), lastCreatedFile));
+    }
 };

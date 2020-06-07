@@ -13,20 +13,21 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { extensionRoot } from './create-component';
+import { openFile, getWorkspacePath } from '../util/file';
 
 const {
     createNewFileFromTemplate,
     checkForFolderAndCreate
 } = require('../util/file');
 
-const { validateComponentName } = require('../util/validation');
+const { validateName } = require('../util/validation');
 
-export const createQuery = async () => {
+export default async () => {
     const pathToSourceFolder = 'src/app/query';
     const queryName = await vscode.window.showInputBox({
         placeHolder: 'MyQuery',
         prompt: 'Enter query name',
-        validateInput: validateComponentName
+        validateInput: validateName
     });
 
     if (!queryName) {
@@ -42,4 +43,6 @@ export const createQuery = async () => {
         /Placeholder/g,
         queryName
     );
+
+    openFile(path.resolve(getWorkspacePath(), `${pathToSourceFolder}/${queryName}.query.js`));
 };
