@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 
-import { createQuery, extendQuery } from './commands/query';
+import { createQuery } from './commands/create-query';
 import createComponent from './commands/create-component';
-import extendComponent from './commands/extend-component';
+import extend from './commands/extender';
 import { Extendable } from './types/extend-component.types';
 import { validateScandiPWA } from './util/file';
 
@@ -12,10 +12,10 @@ const commandMap = {
 	'scandipwa-devtools.createNewQuery': createQuery,
 	// TODO create new store
 	// 'scandipwa-devtools.createNewStore': createStore,
-	'scandipwa-devtools.extendCoreComponent': extendComponent.bind(null, Extendable.component),
-	'scandipwa-devtools.extendCoreRoute': extendComponent.bind(null, Extendable.route),
-	'scandipwa-devtools.extendCoreQuery': extendComponent.bind(null, Extendable.query),
-	'scandipwa-devtools.extendCoreStore': extendComponent.bind(null, Extendable.store),
+	'scandipwa-devtools.extendCoreComponent': extend.bind(null, Extendable.component),
+	'scandipwa-devtools.extendCoreRoute': extend.bind(null, Extendable.route),
+	'scandipwa-devtools.extendCoreQuery': extend.bind(null, Extendable.query),
+	'scandipwa-devtools.extendCoreStore': extend.bind(null, Extendable.store),
 	// 'scandipwa-devtools.extendCoreQuery': extendQuery
 };
 

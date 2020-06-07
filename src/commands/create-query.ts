@@ -16,9 +16,7 @@ import { extensionRoot } from './create-component';
 
 const {
     createNewFileFromTemplate,
-    checkForFolderAndCreate,
-    showSourceDirectoryContentInSelect,
-    createNewFileWithContent
+    checkForFolderAndCreate
 } = require('../util/file');
 
 const { validateComponentName } = require('../util/validation');
@@ -44,36 +42,4 @@ export const createQuery = async () => {
         /Placeholder/g,
         queryName
     );
-};
-
-export const extendQuery = async () => {
-    const pathToSourceFolder = 'src/app/query';
-
-    const component = await showSourceDirectoryContentInSelect(
-        pathToSourceFolder,
-        'Which query to override?'
-    );
-
-    if (!component) {
-        vscode.window.showErrorMessage('Component name is required!');
-        return;
-    }
-
-    // @ts-ignore
-    const { label: queryPath } = component;
-    const queryName = queryPath.replace('.query.js', '');
-
-    checkForFolderAndCreate(pathToSourceFolder);
-
-    const pathToNewFile = `${pathToSourceFolder}/${queryPath}`;
-    const newFileContent = [
-        `import { ${queryName} as Source${queryName} } from 'SourceQuery/${queryName}.query';`,
-        '',
-        `// TODO: implement ${queryName}`,
-        '',
-        `export default new ${queryName}()`,
-        ''
-    ].join('\n');
-
-    createNewFileWithContent(pathToNewFile, newFileContent);
 };

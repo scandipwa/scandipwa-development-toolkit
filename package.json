@@ -13,9 +13,11 @@
 		"onCommand:scandipwa-devtools.createNewComponent",
 		"onCommand:scandipwa-devtools.createNewRoute",
 		"onCommand:scandipwa-devtools.createNewQuery",
-		"onCommand:scandipwa-devtools.extendCoreQuery",
+		"onCommand:scandipwa-devtools.createNewStore",
+
 		"onCommand:scandipwa-devtools.extendCoreComponent",
 		"onCommand:scandipwa-devtools.extendCoreRoute",
+		"onCommand:scandipwa-devtools.extendCoreQuery",
 		"onCommand:scandipwa-devtools.extendCoreStore"
 	],
 	"main": "./out/extension.js",
@@ -34,9 +36,10 @@
 				"title": "NEW Create new query"
 			},
 			{
-				"command": "scandipwa-devtools.extendCoreQuery",
-				"title": "NEW Extend source query"
+				"command": "scandipwa-devtools.createNewStore",
+				"title": "NEW Create new store"
 			},
+
 			{
 				"command": "scandipwa-devtools.extendCoreComponent",
 				"title": "NEW Extend source component"
@@ -44,6 +47,10 @@
 			{
 				"command": "scandipwa-devtools.extendCoreRoute",
 				"title": "NEW Extend source route"
+			},
+			{
+				"command": "scandipwa-devtools.extendCoreQuery",
+				"title": "NEW Extend source query"
 			},
 			{
 				"command": "scandipwa-devtools.extendCoreStore",
