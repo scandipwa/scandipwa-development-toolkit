@@ -13,8 +13,10 @@ import {
 
 import {
     showSourceDirectoryContentInSelect,
+    createNewFileFromTemplate,
     getSourcePath,
-    getWorkspacePath
+    getWorkspacePath,
+    openFile
 } from '../util/file';
 
 import {
@@ -22,7 +24,8 @@ import {
     FileInformation,
     ExportsPaths,
     ExportData,
-    ExportType
+    ExportType,
+    StylesOption
 } from '../types/extend-component.types';
 
 const ACTION_POSTFIX = 'action';
@@ -30,7 +33,9 @@ const ACTION_POSTFIX = 'action';
 class Extender {
     protected pathToSourceFolder: string = '';
     protected extendableName: string = '';
+    protected chosenStylesOption: StylesOption | undefined;
     protected extendableType: Extendable;
+    protected lastCreatedFilePath: string | undefined;
 
     /**
      * Initialise instance with corresponding extendable
@@ -191,7 +196,6 @@ class Extender {
         return processDefaultExport(<NodePath<ExportDefaultDeclaration>>exportDefaultPaths[0]);
     }
 
-
     /**
      * Retrieve exports that user is willing to extend (from the specified file)
      * @param fileExportsNames
@@ -215,20 +219,22 @@ class Extender {
 
     /**
      * Generate all necessary contents for the created file
-     *   + imports from source file
-     *   + to-do section
-     *   + exports from new file
-     *   + exports from source file
-     * @param fileInfo
      */
     generateNewFileContents(fileInfo: FileInformation) : string {
         const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
         const { fileName, allExports, chosenExports, defaultExportCode, originalCode } = fileInfo;
+        const generableName = fileName.slice(0, fileName.lastIndexOf('.'));
+
+        const isMapping = (name: string) => ['mapStateToProps', 'mapDispatchToProps'].includes(name);
 
         const sourceFilePath = path.join(
             `Source${this.extendableType}`,
             this.extendableName,
-            fileName.slice(0, fileName.lastIndexOf('.'))
+            generableName
+        );
+
+        const notChosenExports = allExports.filter(
+            one => !chosenExports.includes(one)
         );
 
         const generateAdditionalImportString = (): string => {
@@ -264,6 +270,24 @@ class Extender {
             ).join('\n');
         };
 
+        const generateStyleImport = (): string => {
+            if (
+                [Extendable.route, Extendable.component].includes(this.extendableType)
+                && fileName.includes('component')
+            ) {
+                switch (this.chosenStylesOption) {
+                case StylesOption.extend:
+                    return `import '${generableName}.style.override'`;
+
+                case StylesOption.override:
+                default:
+                    return `import '${generableName}.style'`;
+                }
+            }
+
+            return '';
+        };
+
         const generateImportString = (): string => {
             if (!chosenExports.length) {
                 return '';
@@ -271,21 +295,18 @@ class Extender {
 
             return 'import {\n'
                 .concat(chosenExports.map(({ name }) => `    ${name} as Source${capitalize(name)},\n`).join(''))
+                .concat(notChosenExports.map(({ name }) => `    ${name},\n`).join(''))
                 .concat(`} from \'${sourceFilePath}\';`);
         };
 
         const generateExportsFromSource = (): string => {
-            const notChosenExports = allExports.filter(
-                one => !chosenExports.includes(one)
-            );
-
             if (!notChosenExports.length) {
                 return '';
             }
 
             return 'export {\n'
                 .concat(notChosenExports.map(({ name }) => `    ${name},\n`).join(''))
-                .concat(`} from \'${sourceFilePath}\';`);
+                .concat('};');
         };
 
         const generateClassExtend = (): string => {
@@ -299,26 +320,47 @@ class Extender {
                 + '};';
         };
 
-        const generateExtendString = (): string => {
+        const generateMappingsExtends = (): Array<string> => {
+            return chosenExports
+                .filter(({ name }) => isMapping(name))
+                .map(
+                    ({ name }) => {
+                        const argument = name.includes('State')
+                            ? 'state'
+                            : 'dispatch';
+
+                        const newExport =
+                            `export const ${name} = ${argument} => ({\n` +
+                            `    ...Source${capitalize(name)}(${argument}),\n` +
+                            `    // TODO extend ${name}\n` +
+                            `});`;
+
+                        return newExport;
+                    }
+                );
+        };
+
+        const generateExtendStrings = (): Array<string> => {
             if (!chosenExports.length) {
-                return '';
+                return [];
             }
 
             return chosenExports
-                .filter(one => one.type !== ExportType.class)
+                .filter(one => one.type !== ExportType.class && !isMapping(one.name))
                 .map(({ name }) =>
                     `//TODO: implement ${name}\n`
                     + `export const ${name} = Source${capitalize(name)};`
-                )
-                .join('\n\n');
+                );
         };
 
         // Generate new file: imports + exports from source + all extendables + class template + exdf
         const result = [
             generateAdditionalImportString(),
             generateImportString(),
+            generateStyleImport(),
             generateExportsFromSource(),
-            generateExtendString(),
+            ...generateExtendStrings(),
+            ...generateMappingsExtends(),
             generateClassExtend(),
             defaultExportCode
         ].filter(Boolean).join('\n\n').concat('\n');
@@ -343,6 +385,8 @@ class Extender {
             contents,
             console.error
         );
+
+        this.lastCreatedFilePath = newFilePath;
     }
 
     /**
@@ -415,6 +459,59 @@ class Extender {
     }
 
     /**
+     * Handle operations with style files (should be called for components and routes only)
+     */
+    async handleStyles() {
+        /**
+         * Choose an option
+         */
+        const chooseStylesOption = async () => {
+            this.chosenStylesOption = (await vscode.window.showQuickPick(
+                [
+                    { label: 'Extend', target: StylesOption.extend },
+                    { label: 'Override', target: StylesOption.override },
+                    { label: 'Leave as is', target: StylesOption.keep }
+                ],
+                {
+                    placeHolder: 'What would you like to do with styles?',
+                    canPickMany: false
+                }
+            ))?.target;
+        };
+
+        /**
+         * Create style file from template
+         */
+        const createStyleFile = () => {
+            const extensionRoot = path.join(__dirname, '..', '..');
+
+            this.createDestinationDirectoryIfNotExists();
+            createNewFileFromTemplate(
+                path.join(extensionRoot, `src/templates/stylesheet.scss`),
+                path.join(
+                    this.pathToSourceFolder,
+                    this.extendableName,
+                    `${this.extendableName}.style${
+                        this.chosenStylesOption === StylesOption.override ? '.override' : ''
+                    }.scss`,
+                ),
+                /Placeholder/g,
+                this.extendableName
+            );
+        };
+
+        await chooseStylesOption();
+        if (!this.chosenStylesOption) {
+            vscode.window.showErrorMessage('You must choose what to do with styles');
+            return;
+        }
+
+        if (this.chosenStylesOption !== StylesOption.keep) {
+            createStyleFile();
+        }
+    }
+
+    /**
      * Entry point
      */
     async process() {
@@ -442,8 +539,17 @@ class Extender {
                 const code = fs.readFileSync(fullSourcePath, 'utf-8');
                 const exportsPaths = this.getExportPathsFromCode(code);
                 const namedExportsData = this.getNamedExportsNames(exportsPaths);
+                if (!namedExportsData.length) {
+                    vscode.window.showInformationMessage(`No named exports were found in ${fileName.split('.')[1]}, continuing.`);
+                    return;
+                }
+
                 const defaultExportCode = this.getDefaultExportCode(exportsPaths, code);
                 const chosenThingsToExtend = await this.chooseThingsToExtend(namedExportsData.map(x => x.name), fileName);
+
+                if ([Extendable.route, Extendable.component].includes(this.extendableType) && fileName.includes('component')) {
+                    await this.handleStyles();
+                }
 
                 // Handle not extending anything in the file
                 if (!chosenThingsToExtend?.length) { return; }
@@ -460,6 +566,10 @@ class Extender {
                 this.createNewFileWithContents(newFilePath, newFileContents);
             }, Promise.resolve(undefined)
         );
+
+        if (this.lastCreatedFilePath) {
+            openFile(this.lastCreatedFilePath);
+        }
     }
 }
 

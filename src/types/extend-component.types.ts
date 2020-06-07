@@ -29,6 +29,12 @@ export enum Extendable {
     store = 'Store'
 }
 
+export enum StylesOption {
+    extend = 'extend',
+    override = 'override',
+    keep = 'keep'
+}
+
 export interface ISearchedFiles  {
     [key: string]: string
 }
