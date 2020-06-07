@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const getWorkspacePath = () : string => {
+export const getWorkspacePath = () : string => {
     return vscode.workspace.workspaceFolders?.[0].uri.fsPath || '';
 };
 
@@ -24,19 +24,11 @@ export const validateScandiPWA = () => {
     return true;
 };
 
-
-export const checkForFolderAndCreate = (name: String) : void => {
-    const dirName = `${getWorkspacePath()}/${name}`;
-    if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName);
-    }
-};
-
 const openFile = (destFile: string) : void => {
     vscode.workspace.openTextDocument(destFile).then(
         editor => vscode.window.showTextDocument(editor)
     );
-}
+};
 
 export const createNewFileFromTemplate = async (src: string, dest: string, pattern: RegExp, name: string) : Promise<void> => {
     if (!src || !dest || !name) {
@@ -56,7 +48,11 @@ const getDirFolders = (path: string) : string[] => {
     return fs.readdirSync(path);
 };
 
-const getSourcePath = (pathToSourceFolder: string) : string => {
+/**
+ * Get path to corresponding (src/app/<this>) folder
+ * @param pathToSourceFolder
+ */
+export const getSourcePath = (pathToSourceFolder: string) : string => {
     const sourcePath : string = vscode.workspace.getConfiguration().get('scandipwa.sourcePath') || '';
     return path.join(getWorkspacePath(), sourcePath, pathToSourceFolder);
 };
@@ -67,10 +63,4 @@ export const showSourceDirectoryContentInSelect = async (pathToSourceFolder: str
         componentNames.map(label => ({ label })),
         { placeHolder }
     );
-};
-
-export const createNewFileWithContent = async (path: string, content: string) => {
-    const destFile = `${getWorkspacePath()}/${path}`;
-    await fs.writeFileSync(destFile, content);
-    openFile(destFile);
 };

@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 
 import { createQuery, extendQuery } from './commands/query';
 import createComponent from './commands/create-component';
-import extendComponent, { Extendable } from './commands/extend-component';
+import extendComponent from './commands/extend-component';
+import { Extendable } from './types/extend-component.types';
 import { validateScandiPWA } from './util/file';
 
 const commandMap = {
