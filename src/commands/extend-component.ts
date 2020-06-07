@@ -25,6 +25,8 @@ import {
     ExportType
 } from '../types/extend-component.types';
 
+const ACTION_POSTFIX = 'action';
+
 class Extender {
     protected pathToSourceFolder: string = '';
     protected extendableName: string = '';
@@ -43,6 +45,14 @@ class Extender {
         case Extendable.component:
             this.pathToSourceFolder = 'src/app/component';
             break;
+        case Extendable.query:
+            this.pathToSourceFolder = 'src/app/query';
+            break;
+        case Extendable.store:
+            this.pathToSourceFolder = 'src/app/store';
+            break;
+        default:
+            throw Error('Unexpected extendable type!');
         }
     }
 
@@ -52,7 +62,7 @@ class Extender {
     async getExtendableName() {
         this.extendableName = (await showSourceDirectoryContentInSelect(
             this.pathToSourceFolder,
-            `Which ${typeof this.extendableType} to override?`
+            `Which ${this.extendableType.toLowerCase()} to override?`
         ))?.label || '';
     }
 
@@ -149,7 +159,7 @@ class Extender {
      *   + actual code
      * @param exports
      */
-    getDefaultExportCode(exports: ExportsPaths, code: string) : string {
+    getDefaultExportCode(exports: ExportsPaths, code: string) : string | undefined {
         const processDefaultExport = (path: NodePath<ExportDefaultDeclaration>) : string => {
             const { node: { loc } } = path;
             const { start, end } = <SourceLocation>loc;
@@ -176,8 +186,9 @@ class Extender {
             return exportDeclarationArray.join('\n');
         };
 
-        const exportDefaultPath = exports.filter(e => e.type === 'ExportDefaultDeclaration')[0];
-        return processDefaultExport(<NodePath<ExportDefaultDeclaration>>exportDefaultPath);
+        const exportDefaultPaths = exports.filter(e => e.type === 'ExportDefaultDeclaration');
+        if (!exportDefaultPaths.length) { return; }
+        return processDefaultExport(<NodePath<ExportDefaultDeclaration>>exportDefaultPaths[0]);
     }
 
 
@@ -190,14 +201,17 @@ class Extender {
         const postfix = fileName.split('.')[1];
 
         return await vscode.window.showQuickPick(
-            fileExportsNames,
+            fileExportsNames.concat(
+                postfix === ACTION_POSTFIX
+                    ? ['Add something new!']
+                    : []
+            ),
             {
                 placeHolder: `What do you wish to extend in ${postfix}?`,
                 canPickMany: true
             }
         );
     }
-
 
     /**
      * Generate all necessary contents for the created file
@@ -209,7 +223,7 @@ class Extender {
      */
     generateNewFileContents(fileInfo: FileInformation) : string {
         const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
-        const { fileName, allExports, chosenExports, defaultExportCode } = fileInfo;
+        const { fileName, allExports, chosenExports, defaultExportCode, originalCode } = fileInfo;
 
         const sourceFilePath = path.join(
             `Source${this.extendableType}`,
@@ -217,26 +231,64 @@ class Extender {
             fileName.slice(0, fileName.lastIndexOf('.'))
         );
 
-        const importString = 'import {\n'
-            .concat(chosenExports.map(({ name }) => `    ${name} as Source${capitalize(name)},\n`).join(''))
-            .concat(`} from \'${sourceFilePath}\';`);
+        const generateAdditionalImportString = (): string => {
+            if (!defaultExportCode) { return ''; }
 
+            const exdfWords = defaultExportCode.match(/\w+/gm)?.filter(
+                word => !['export', 'default'].includes(word)
+            );
 
-        const generateExportsFromSource = () => {
+            return (exdfWords || []).reduce(
+                (acc, importableName): Array<string | undefined> => {
+                    const library = originalCode.match(
+                        new RegExp(`import.+${importableName}.+from '(?<library>.+)'`)
+                    )?.groups?.library;
+                    const braces = !!originalCode.match(
+                        new RegExp(`import.+{.*${importableName}.*}.+from '(?<library>.+)'`)
+                    );
+
+                    if (!library) {
+                        return acc;
+                    }
+
+                    acc.push(
+                        ''.concat('import ')
+                        .concat(braces ? '{ ' : '')
+                        .concat(`${importableName}`)
+                        .concat(braces ? ' }' : '')
+                        .concat(` from '${library}';`)
+                    );
+
+                    return acc;
+                }, new Array<string | undefined>()
+            ).join('\n');
+        };
+
+        const generateImportString = (): string => {
+            if (!chosenExports.length) {
+                return '';
+            }
+
+            return 'import {\n'
+                .concat(chosenExports.map(({ name }) => `    ${name} as Source${capitalize(name)},\n`).join(''))
+                .concat(`} from \'${sourceFilePath}\';`);
+        };
+
+        const generateExportsFromSource = (): string => {
             const notChosenExports = allExports.filter(
                 one => !chosenExports.includes(one)
             );
 
-            if (notChosenExports.length) {
-                return 'export {\n'
-                    .concat(notChosenExports.map(({ name }) => `    ${name},\n`).join(''))
-                    .concat(`} from \'${sourceFilePath}\';`);
+            if (!notChosenExports.length) {
+                return '';
             }
 
-            return '';
+            return 'export {\n'
+                .concat(notChosenExports.map(({ name }) => `    ${name},\n`).join(''))
+                .concat(`} from \'${sourceFilePath}\';`);
         };
 
-        const generateClassExtend = () => {
+        const generateClassExtend = (): string => {
             const classExport = chosenExports.find(one => one.type === ExportType.class);
             if (!classExport) {
                 return '';
@@ -247,31 +299,31 @@ class Extender {
                 + '};';
         };
 
-        const exportFromSourceString = generateExportsFromSource();
-        const classExtend = generateClassExtend();
+        const generateExtendString = (): string => {
+            if (!chosenExports.length) {
+                return '';
+            }
 
-        const extendString = chosenExports
-            .filter(one => one.type !== ExportType.class)
-            .map(({ name }) =>
-                `//TODO: implement ${name}\n`
-                + `export const ${name} = Source${capitalize(name)};`
-            )
-            .join('\n\n');
+            return chosenExports
+                .filter(one => one.type !== ExportType.class)
+                .map(({ name }) =>
+                    `//TODO: implement ${name}\n`
+                    + `export const ${name} = Source${capitalize(name)};`
+                )
+                .join('\n\n');
+        };
 
-        // Generate new file: imports + exports from source + all extendables + exdf
-        let result = importString;
-        if (exportFromSourceString) {
-            result = [result, exportFromSourceString].join('\n\n');
-        }
-        if (extendString) {
-            result = [result, extendString].join('\n\n');
-        }
-        if (classExtend) {
-            result = [result, classExtend].join('\n\n');
-        }
-        result = [result, defaultExportCode].join('\n\n');
+        // Generate new file: imports + exports from source + all extendables + class template + exdf
+        const result = [
+            generateAdditionalImportString(),
+            generateImportString(),
+            generateExportsFromSource(),
+            generateExtendString(),
+            generateClassExtend(),
+            defaultExportCode
+        ].filter(Boolean).join('\n\n').concat('\n');
 
-        return result + '\n';
+        return result;
     };
 
     /**
@@ -309,10 +361,57 @@ class Extender {
             fs.mkdirSync(sourceFolderAbsolutePath);
         }
 
-        // Handle destination directory does not exist
-        if (!fs.existsSync(destinationDirectoryPath)) {
-            fs.mkdirSync(destinationDirectoryPath);
+        // Create a extendable-named directory for all extendables excluding the following
+        if (![Extendable.query].includes(this.extendableType)) {
+            // Handle destination directory does not exist
+            if (!fs.existsSync(destinationDirectoryPath)) {
+                fs.mkdirSync(destinationDirectoryPath);
+            }
         }
+    }
+
+    /**
+     * Builds a path to the directory of extendable files
+     */
+    get resourceDirectory() {
+        if ([Extendable.component, Extendable.route, Extendable.store].includes(this.extendableType)) {
+            return path.join(getSourcePath(this.pathToSourceFolder), this.extendableName);
+        }
+
+        return getSourcePath(this.pathToSourceFolder);
+    }
+
+    /**
+     * Get resource names from component's directory
+     */
+    getResourceList(): Array<string> {
+        if ([Extendable.component, Extendable.route, Extendable.store].includes(this.extendableType)) {
+            return fs
+                .readdirSync(this.resourceDirectory)
+                .filter(fileName => fileName.match(/\.js$/) && fileName !== 'index.js');
+        }
+
+        if ([Extendable.query].includes(this.extendableType)) {
+            return [`${this.extendableName}.query.js`];
+        }
+
+        throw Error('Unexpected extendable type!');
+    }
+
+    /**
+     * Map chosen things to actual exports
+     */
+    getChosenExports(chosenThingsToExtend: string[], namedExportsData: ExportData[]) {
+        return chosenThingsToExtend.reduce(
+            (acc, cur): Array<ExportData> => {
+                const foundValue = namedExportsData.find(one => one.name === cur);
+                if (foundValue) {
+                    acc.push(foundValue);
+                }
+
+                return acc;
+            }, new Array<ExportData>()
+        );
     }
 
     /**
@@ -321,23 +420,19 @@ class Extender {
     async process() {
         await this.getExtendableName();
         if (!this.extendableName) {
-            vscode.window.showErrorMessage(`${typeof this.extendableType} name is required!`);
+            vscode.window.showErrorMessage(`${this.extendableType} name is required!`);
             return;
         }
 
-        const resourceDirectory = path.join(getSourcePath(this.pathToSourceFolder), this.extendableName);
-        const resourceList = fs
-            .readdirSync(resourceDirectory)
-            .filter(fileName => fileName.match(/\.js$/) && fileName !== 'index.js');
-
-        await resourceList.reduce(
+        await (this.getResourceList()).reduce(
             async (acc: Promise<any>, fileName: string): Promise<any> => {
                 await acc;
-                const fullSourcePath = path.resolve(resourceDirectory, fileName);
+                const fullSourcePath = path.resolve(this.resourceDirectory, fileName);
                 const newFilePath = path.resolve(
                     getWorkspacePath(),
                     this.pathToSourceFolder,
-                    this.extendableName,
+                    // Handle extendables like query, which don't have one extra directory
+                    ![Extendable.query].includes(this.extendableType) ? this.extendableName : '',
                     fileName
                 );
 
@@ -351,25 +446,17 @@ class Extender {
                 const chosenThingsToExtend = await this.chooseThingsToExtend(namedExportsData.map(x => x.name), fileName);
 
                 // Handle not extending anything in the file
-                if (!chosenThingsToExtend) { return; }
+                if (!chosenThingsToExtend?.length) { return; }
 
-                const chosenExports = chosenThingsToExtend.reduce(
-                    (acc, cur): Array<ExportData> => {
-                        const foundValue = namedExportsData.find(one => one.name === cur);
-                        if (foundValue) {
-                            acc.push(foundValue);
-                        }
-
-                        return acc;
-                    }, new Array<ExportData>()
-                );
-
+                const chosenExports = this.getChosenExports(chosenThingsToExtend, namedExportsData);
                 const newFileContents = this.generateNewFileContents({
                     allExports: namedExportsData,
                     chosenExports,
                     defaultExportCode,
-                    fileName
+                    fileName,
+                    originalCode: code
                 });
+
                 this.createNewFileWithContents(newFilePath, newFileContents);
             }, Promise.resolve(undefined)
         );

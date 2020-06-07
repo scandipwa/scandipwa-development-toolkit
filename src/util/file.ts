@@ -41,7 +41,7 @@ export const createNewFileFromTemplate = async (src: string, dest: string, patte
     openFile(destFile);
 };
 
-const getDirFolders = (path: string) : string[] => {
+const getDirContents = (path: string) : string[] => {
     if (!fs.existsSync(path)) {
         return [];
     }
@@ -58,7 +58,16 @@ export const getSourcePath = (pathToSourceFolder: string) : string => {
 };
 
 export const showSourceDirectoryContentInSelect = async (pathToSourceFolder: string, placeHolder: string) => {
-    const componentNames = await getDirFolders(getSourcePath(pathToSourceFolder));
+    const componentNames = await getDirContents(getSourcePath(pathToSourceFolder))
+        .map(directoryEntry => {
+            if (pathToSourceFolder.includes('query')) {
+                return directoryEntry.split('.')[0];
+            }
+
+            return directoryEntry;
+        })
+        .filter(x => x !== ('index.js'));
+
     return await vscode.window.showQuickPick(
         componentNames.map(label => ({ label })),
         { placeHolder }

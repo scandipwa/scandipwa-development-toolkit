@@ -9,10 +9,14 @@ import { validateScandiPWA } from './util/file';
 const commandMap = {
 	'scandipwa-devtools.createNewComponent': createComponent.bind(null, false),
 	'scandipwa-devtools.createNewRoute': createComponent.bind(null, true),
+	'scandipwa-devtools.createNewQuery': createQuery,
+	// TODO create new store
+	// 'scandipwa-devtools.createNewStore': createStore,
 	'scandipwa-devtools.extendCoreComponent': extendComponent.bind(null, Extendable.component),
 	'scandipwa-devtools.extendCoreRoute': extendComponent.bind(null, Extendable.route),
-	'scandipwa-devtools.createNewQuery': createQuery,
-	'scandipwa-devtools.extendCoreQuery': extendQuery
+	'scandipwa-devtools.extendCoreQuery': extendComponent.bind(null, Extendable.query),
+	'scandipwa-devtools.extendCoreStore': extendComponent.bind(null, Extendable.store),
+	// 'scandipwa-devtools.extendCoreQuery': extendQuery
 };
 
 export function activate(context: vscode.ExtensionContext) {

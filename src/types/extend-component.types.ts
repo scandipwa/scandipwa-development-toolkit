@@ -24,7 +24,9 @@ export interface ExportData {
 
 export enum Extendable {
     route = 'Route',
-    component = 'Component'
+    component = 'Component',
+    query = 'Query',
+    store = 'Store'
 }
 
 export interface ISearchedFiles  {
@@ -34,6 +36,7 @@ export interface ISearchedFiles  {
 export interface FileInformation {
     allExports: ExportData[],
     chosenExports: ExportData[],
-    defaultExportCode: string,
-    fileName: string
+    defaultExportCode: string | undefined,
+    fileName: string,
+    originalCode: string
 }
