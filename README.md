@@ -1,65 +1,76 @@
-# scandipwa-devtools README
+# ScandiPWA development toolkit
 
-This is the README for your extension "scandipwa-devtools". After writing up a brief description, we recommend including the following sections.
+#### Made to simplify your work with internal components, routes and queries.
 
-## Features
+This extension is a core extension of ScandiPWA extension pack for development in VSCode editor. 
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+> **NOTE #0**: The store related file support is coming soon!
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+> **NOTE #1**: This extension is in beta, please use with caution and report any issues to Scandipwa Github.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. Node 10^ + npm 6.8^
+2. VSCode ^1.37
 
-## Extension Settings
+> **NOTE**: Extension might work on previous versions as well, it is not yet tested.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## How to use?
 
-For example:
+1. Install `vsce` – official extension packaging tool
 
-This extension contributes the following settings:
+```
+npm i -g vsce
+```
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+2. Pack the extension
 
-## Known Issues
+```
+vsce package
+```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+3. Open command pallete, type `> Install from VSIX`
 
-## Release Notes
+4. Choose generated `.vsix` file
 
-Users appreciate release notes as you update your extension.
+## Features
 
-### 1.0.0
+### Commands
 
-Initial release of ...
+- ScandiPWA: Create new component
+- ScandiPWA: Extend source component
+- ScandiPWA: Create new route
+- ScandiPWA: Extend source query
+- ScandiPWA: Create new query
+- ScandiPWA: Extend source route
 
-### 1.0.1
+### Configuration
 
-Fixed issue #.
+- Path to Scandipwa source (relative), default value:
 
-### 1.1.0
+```
+../../../../../vendor/scandipwa/source/
+```
 
-Added features X, Y, and Z.
+### Snippets
 
------------------------------------------------------------------------------------------------------------
+When editing JavaScript file type one of the snippet prefixes listed below and press `Tab` to replace keyword with predefined template.
 
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+| Prefix      | Template                                 |
+| ----------- | ---------------------------------------- |
+| **exdf**    | Default export declaration for IndexJS   |
+| **comp**    | Creates new ScandiPWA component          |
+| **ecomp**   | Extends Source ScandiPWA component       |
+| **cont**    | Creates new ScandiPWA container class    |
+| **econt**   | Extends Source ScandiPWA container class |
+| **con**     | Connects component to redux              |
+| **mstp**    | Declares mapStateToProps                 |
+| **mdtp**    | Declared mapDispatchToProps              |
+| **qc**      | Creates new ScandiPWA query              |
+| **eqc**     | Extends ScandiPWA Source query           |
+| **eroute**  | Extends ScandiPWA Source Route component |
+| **ecroute** | Extends ScandiPWA Source Route container |
+| **crd**     | Creates reducer                          |
+| **erd**     | Extends ScandiPWA reducer                |
+| **cdisp**   | Creates new ScandiPWA dispatcher         |
+| **edisp**   | Extends ScandiPWA dispatcher             |
