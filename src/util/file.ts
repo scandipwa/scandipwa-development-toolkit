@@ -24,11 +24,19 @@ export const validateScandiPWA = () => {
     return true;
 };
 
-const openFile = (destFile: string) : void => {
+export const openFile = (destFile: string) : void => {
     vscode.workspace.openTextDocument(destFile).then(
         editor => vscode.window.showTextDocument(editor)
     );
 };
+
+export const checkForFolderAndCreate = (name: string) => {
+    const dirName = `${getWorkspacePath()}/${name}`;
+    if (!fs.existsSync(dirName)) {
+        fs.mkdirSync(dirName);
+    }
+};
+
 
 export const createNewFileFromTemplate = async (src: string, dest: string, pattern: RegExp, name: string) : Promise<void> => {
     if (!src || !dest || !name) {
@@ -38,7 +46,6 @@ export const createNewFileFromTemplate = async (src: string, dest: string, patte
     const content = data.replace(pattern, name);
     const destFile = `${getWorkspacePath()}/${dest}`;
     await fs.writeFileSync(destFile, content);
-    openFile(destFile);
 };
 
 const getDirContents = (path: string) : string[] => {
