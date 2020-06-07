@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
-import { createQuery } from './commands/create-query';
+import createQuery from './commands/create-query';
+import createStore from './commands/create-store';
 import createComponent from './commands/create-component';
 import extend from './commands/extender';
 import { Extendable } from './types/extend-component.types';
@@ -10,8 +11,7 @@ const commandMap = {
 	'scandipwa-devtools.createNewComponent': createComponent.bind(null, false),
 	'scandipwa-devtools.createNewRoute': createComponent.bind(null, true),
 	'scandipwa-devtools.createNewQuery': createQuery,
-	// TODO create new store
-	// 'scandipwa-devtools.createNewStore': createStore,
+	'scandipwa-devtools.createNewStore': createStore,
 	'scandipwa-devtools.extendCoreComponent': extend.bind(null, Extendable.component),
 	'scandipwa-devtools.extendCoreRoute': extend.bind(null, Extendable.route),
 	'scandipwa-devtools.extendCoreQuery': extend.bind(null, Extendable.query),
