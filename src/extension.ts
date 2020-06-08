@@ -8,15 +8,14 @@ import { Extendable } from './types/extend-component.types';
 import { validateScandiPWA } from './util/file';
 
 const commandMap = {
-	'scandipwa-devtools.createNewComponent': createComponent.bind(null, false),
-	'scandipwa-devtools.createNewRoute': createComponent.bind(null, true),
-	'scandipwa-devtools.createNewQuery': createQuery,
-	'scandipwa-devtools.createNewStore': createStore,
-	'scandipwa-devtools.extendCoreComponent': extend.bind(null, Extendable.component),
-	'scandipwa-devtools.extendCoreRoute': extend.bind(null, Extendable.route),
-	'scandipwa-devtools.extendCoreQuery': extend.bind(null, Extendable.query),
-	'scandipwa-devtools.extendCoreStore': extend.bind(null, Extendable.store),
-	// 'scandipwa-devtools.extendCoreQuery': extendQuery
+	'extension.createNewComponent': createComponent.bind(null, false),
+	'extension.createNewRoute': createComponent.bind(null, true),
+	'extension.createNewQuery': createQuery,
+	'extension.createNewStore': createStore,
+	'extension.extendCoreComponent': extend.bind(null, Extendable.component),
+	'extension.extendCoreRoute': extend.bind(null, Extendable.route),
+	'extension.extendCoreQuery': extend.bind(null, Extendable.query),
+	'extension.extendCoreStore': extend.bind(null, Extendable.store),
 };
 
 export function activate(context: vscode.ExtensionContext) {
