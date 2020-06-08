@@ -240,11 +240,18 @@ class Extender {
         const generateAdditionalImportString = (): string => {
             if (!defaultExportCode) { return ''; }
 
-            const exdfWords = defaultExportCode.match(/\w+/gm)?.filter(
-                word => !['export', 'default'].includes(word)
+            const exdfWords = [
+                ...new Set(
+                    defaultExportCode.match(/\w+\(/gm)?.filter(
+                        word => !['export', 'default'].includes(word)
+                    ) || []
+                )
+            ].map(
+                // Cut away parentheses
+                str => str.slice(0, str.length - 1)
             );
 
-            return (exdfWords || []).reduce(
+            return (exdfWords).reduce(
                 (acc, importableName): Array<string | undefined> => {
                     const library = originalCode.match(
                         new RegExp(`import.+${importableName}.+from '(?<library>.+)'`)
