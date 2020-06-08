@@ -1,8 +1,16 @@
 {
-	"name": "scandipwa-devtools",
-	"displayName": "scandipwa-devtools",
-	"description": "ScandiPWA development toolkit",
-	"version": "0.0.1",
+	"name": "scandipwa-development-toolkit",
+    "publisher": "ScandiPWA",
+	"displayName": "ScandiPWA development toolkit",
+	"description": "ScandiPWA VSCode development tools",
+	"version": "1.0.0",
+	"icon": "icon.png",
+	"license": "SEE LICENSE IN LICENSE",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/scandipwa/scandipwa-development-toolkit.git"
+	},
+	"homepage": "https://github.com/scandipwa/scandipwa-development-toolkit",
 	"engines": {
 		"vscode": "^1.45.0"
 	},
@@ -10,54 +18,74 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:scandipwa-devtools.createNewComponent",
-		"onCommand:scandipwa-devtools.createNewRoute",
-		"onCommand:scandipwa-devtools.createNewQuery",
-		"onCommand:scandipwa-devtools.createNewStore",
+		"onCommand:extension.createNewComponent",
+		"onCommand:extension.createNewRoute",
+		"onCommand:extension.createNewQuery",
+		"onCommand:extension.createNewStore",
 
-		"onCommand:scandipwa-devtools.extendCoreComponent",
-		"onCommand:scandipwa-devtools.extendCoreRoute",
-		"onCommand:scandipwa-devtools.extendCoreQuery",
-		"onCommand:scandipwa-devtools.extendCoreStore"
+		"onCommand:extension.extendCoreComponent",
+		"onCommand:extension.extendCoreRoute",
+		"onCommand:extension.extendCoreQuery",
+		"onCommand:extension.extendCoreStore"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "scandipwa-devtools.createNewComponent",
-				"title": "NEW Create new component"
+				"command": "extension.createNewComponent",
+				"title": "ScandiPWA: Create new component"
 			},
 			{
-				"command": "scandipwa-devtools.createNewRoute",
-				"title": "NEW Create new route"
+				"command": "extension.createNewRoute",
+				"title": "ScandiPWA: Create new route"
 			},
 			{
-				"command": "scandipwa-devtools.createNewQuery",
-				"title": "NEW Create new query"
+				"command": "extension.createNewQuery",
+				"title": "ScandiPWA: Create new query"
 			},
 			{
-				"command": "scandipwa-devtools.createNewStore",
-				"title": "NEW Create new store"
+				"command": "extension.createNewStore",
+				"title": "ScandiPWA: Create new store"
 			},
 
 			{
-				"command": "scandipwa-devtools.extendCoreComponent",
-				"title": "NEW Extend source component"
+				"command": "extension.extendCoreComponent",
+				"title": "ScandiPWA: Extend source component"
 			},
 			{
-				"command": "scandipwa-devtools.extendCoreRoute",
-				"title": "NEW Extend source route"
+				"command": "extension.extendCoreRoute",
+				"title": "ScandiPWA: Extend source route"
 			},
 			{
-				"command": "scandipwa-devtools.extendCoreQuery",
-				"title": "NEW Extend source query"
+				"command": "extension.extendCoreQuery",
+				"title": "ScandiPWA: Extend source query"
 			},
 			{
-				"command": "scandipwa-devtools.extendCoreStore",
-				"title": "NEW Extend source store"
+				"command": "extension.extendCoreStore",
+				"title": "ScandiPWA: Extend source store"
 			}
 		]
 	},
+	"configuration": [
+		{
+			"title": "ScandiPWA configuration",
+			"properties": {
+				"scandipwa.sourcePath": {
+					"type": "string",
+					"default": "../../../../../vendor/scandipwa/source/",
+					"description": "Path to Scandipwa source",
+					"format": "uri",
+					"scope": "window"
+				}
+			}
+		}
+	],
+	"snippets": [
+		{
+			"language": "javascript",
+			"path": "./src/snippets/javascript.json"
+		}
+	],
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",

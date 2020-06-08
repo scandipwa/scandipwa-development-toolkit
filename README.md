@@ -1,19 +1,17 @@
 # ScandiPWA development toolkit
 
-#### Made to simplify your work with internal components, routes and queries.
+#### Made to simplify your work with internal components, routes, queries and store.
 
-This extension is a core extension of ScandiPWA extension pack for development in VSCode editor. 
+This extension is a core extension of ScandiPWA extension pack for development in VSCode editor.
 
-> **NOTE #0**: The store related file support is coming soon!
-
-> **NOTE #1**: This extension is in beta, please use with caution and report any issues to Scandipwa Github.
+> **NOTE**: This extension is in beta, please use with caution and report any issues to ScandiPWA Github.
 
 ## Requirements
 
 1. Node 10^ + npm 6.8^
-2. VSCode ^1.37
+2. VSCode ^1.45
 
-> **NOTE**: Extension might work on previous versions as well, it is not yet tested.
+> **NOTE**: Extension might work on previous versions as well, it is not tested.
 
 ## How to use?
 
@@ -33,16 +31,16 @@ vsce package
 
 4. Choose generated `.vsix` file
 
-## Features
-
 ### Commands
 
 - ScandiPWA: Create new component
-- ScandiPWA: Extend source component
 - ScandiPWA: Create new route
-- ScandiPWA: Extend source query
 - ScandiPWA: Create new query
+- ScandiPWA: Create new store
+- ScandiPWA: Extend source component
 - ScandiPWA: Extend source route
+- ScandiPWA: Extend source query
+- ScandiPWA: Extend source store
 
 ### Configuration
 
