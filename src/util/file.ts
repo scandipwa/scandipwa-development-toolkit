@@ -45,6 +45,11 @@ export const createNewFileFromTemplate = async (src: string, dest: string, patte
     const data = await fs.readFileSync(src, 'utf8');
     const content = data.replace(pattern, name);
     const destFile = `${getWorkspacePath()}/${dest}`;
+
+    if (fs.existsSync(destFile)) {
+        vscode.window.showInformationMessage(`File ${destFile} exists and will not be overwritten`);
+        return;
+    }
     await fs.writeFileSync(destFile, content);
 };
 

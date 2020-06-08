@@ -541,7 +541,10 @@ class Extender {
                 );
 
                 // Prevent overwriting
-                if (fs.existsSync(newFilePath)) { return; }
+                if (fs.existsSync(newFilePath)) {
+                    vscode.window.showInformationMessage(`File ${fileName} exists and will not be overwritten`);
+                    return;
+                }
 
                 const code = fs.readFileSync(fullSourcePath, 'utf-8');
                 const exportsPaths = this.getExportPathsFromCode(code);
