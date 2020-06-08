@@ -1,9 +1,9 @@
 {
 	"name": "scandipwa-development-toolkit",
-    "publisher": "ScandiPWA",
+	"publisher": "ScandiPWA",
 	"displayName": "ScandiPWA development toolkit",
 	"description": "ScandiPWA VSCode development tools",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"icon": "icon.png",
 	"license": "SEE LICENSE IN LICENSE",
 	"repository": {
@@ -22,7 +22,6 @@
 		"onCommand:extension.createNewRoute",
 		"onCommand:extension.createNewQuery",
 		"onCommand:extension.createNewStore",
-
 		"onCommand:extension.extendCoreComponent",
 		"onCommand:extension.extendCoreRoute",
 		"onCommand:extension.extendCoreQuery",
@@ -47,7 +46,6 @@
 				"command": "extension.createNewStore",
 				"title": "ScandiPWA: Create new store"
 			},
-
 			{
 				"command": "extension.extendCoreComponent",
 				"title": "ScandiPWA: Extend source component"
@@ -94,11 +92,13 @@
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
-	"devDependencies": {
+	"dependencies": {
 		"@babel/generator": "^7.9.6",
 		"@babel/parser": "^7.9.6",
 		"@babel/traverse": "^7.9.6",
-		"@babel/types": "^7.9.6",
+		"@babel/types": "^7.9.6"
+	},
+	"devDependencies": {
 		"@types/babel__generator": "^7.6.1",
 		"@types/babel__traverse": "^7.0.11",
 		"@types/glob": "^7.1.1",
