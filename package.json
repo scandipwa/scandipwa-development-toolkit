@@ -64,28 +64,28 @@
 				"command": "extension.extendCoreStore",
 				"title": "ScandiPWA: Extend source store"
 			}
-		]
-	},
-	"configuration": [
-		{
-			"title": "ScandiPWA configuration",
-			"properties": {
-				"scandipwa.sourcePath": {
-					"type": "string",
-					"default": "../../../../../vendor/scandipwa/source/",
-					"description": "Path to Scandipwa source",
-					"format": "uri",
-					"scope": "window"
+		],
+		"configuration": [
+			{
+				"title": "ScandiPWA configuration",
+				"properties": {
+					"scandipwa.sourcePath": {
+						"type": "string",
+						"default": "../../../../../vendor/scandipwa/source/",
+						"description": "Path to Scandipwa source",
+						"format": "uri",
+						"scope": "window"
+					}
 				}
 			}
-		}
-	],
-	"snippets": [
-		{
-			"language": "javascript",
-			"path": "./src/snippets/javascript.json"
-		}
-	],
+		],
+		"snippets": [
+			{
+				"language": "javascript",
+				"path": "./src/snippets/javascript.json"
+			}
+		]
+	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
