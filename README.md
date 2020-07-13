@@ -15,21 +15,27 @@ This extension is a core extension of ScandiPWA extension pack for development i
 
 ## How to use?
 
-1. Install `vsce` – official extension packaging tool
+1. Install node modules
+
+```
+npm ci
+```
+
+2. Install `vsce` – official extension packaging tool
 
 ```
 npm i -g vsce
 ```
 
-2. Pack the extension
+3. Pack the extension
 
 ```
 vsce package
 ```
 
-3. Open command pallete, type `> Install from VSIX`
+4. Open command pallete, type `> Install from VSIX`
 
-4. Choose generated `.vsix` file
+5. Choose generated `.vsix` file
 
 ### Commands
 
