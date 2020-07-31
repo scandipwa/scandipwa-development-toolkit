@@ -46,15 +46,6 @@ export default async () => {
     checkForFolderAndCreate(pathToSourceFolder);
     checkForFolderAndCreate(`${pathToSourceFolder}/${storeName}`);
 
-    createNewFileFromTemplate(
-        path.join(extensionRoot, `templates/${
-            dispatcherType.target ? 'index-store-dispatcher.js' : 'index-store.js'
-        }`),
-        `${pathToSourceFolder}/${storeName}/index.js`,
-        /Placeholder/g,
-        storeName
-    );
-
     let lastCreatedFile = '';
     Object.entries(getFileMap(dispatcherType.target))
         .filter(([postfix]) => dispatcherType.target ? true : !postfix.includes('dispatcher'))

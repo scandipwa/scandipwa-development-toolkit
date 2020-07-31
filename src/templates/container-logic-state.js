@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Placeholder from './Placeholder.component';
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
     // wishlistItems: state.WishlistReducer.productsInWishlist
 });
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch) => ({
     // addProduct: options => CartDispatcher.addProductToCart(dispatch, options)
 });
 
